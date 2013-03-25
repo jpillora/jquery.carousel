@@ -1,6 +1,12 @@
-jquery.carousel
+JQuery 2D Carousel
 ===============
 
-# In Progress !
+# In Progress:
 
-jQuery 2D Carousel Plugin
+* Nice API
+* Cool New Name
+* More Examples
+
+# Sneak peak:
+
+http://jpillora.github.com/jquery.carousel/example/simple.html
