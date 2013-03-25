@@ -1,0 +1,4 @@
+{
+  "coffee": "coffee -w -c -o . src/",
+  "serve": "serve -p 9999"
+}
