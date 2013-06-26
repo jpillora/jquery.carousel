@@ -1,7 +1,7 @@
-<!-- title -->jQuery 2D Carousel<!---->
+<title>jQuery 2D Carousel</title>
 ===============
 
-> <!-- description -->Sliding carousel with grid and sliding modes<!---->
+> <description>Sliding carousel with grid and sliding modes</description>
 
 # In Progress:
 
@@ -15,7 +15,7 @@ http://jpillora.github.com/jquery.carousel/example/simple.html
 
 #### MIT License
 
-Copyright © 2013 <!--author-->Jaime Pillora &lt;dev@jpillora.com&gt;<!---->
+Copyright © 2013 <author>Jaime Pillora &lt;dev@jpillora.com&gt;</author>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
