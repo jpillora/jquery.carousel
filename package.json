@@ -1,0 +1,13 @@
+{
+  "name": "jquery.carousel",
+  "title": "jQuery 2D Carousel",
+  "description": "Sliding carousel with grid and sliding modes",
+  "version": "0.1.0",
+  "homepage": "https://github.com/jpillora/jquery.carousel",
+  "repository": {
+    "type": "git",
+    "url": "https://jpillora@github.com/jpillora/jquery.carousel.git"
+  },
+  "author": "Jaime Pillora <dev@jpillora.com>",
+  "license": "MIT"
+}
