@@ -16,42 +16,43 @@
 
   <script type="text/javascript">
 
-    $(function() { 
+    function move() { 
       $("#c").carousel("to", 0, 1, function() {
         $("#c").carousel("to", 1, 0, function() {
           $("#c").carousel("to", 1, 1);
         })
       });
-    });
+    }
+
+    function init() {
+
+      $("#c").carousel({
+        rowLength: 2
+      });
+
+    }
+
+    $(init);
 
   </script>
 
 
-  <div id="c" data-carousel style="width: 350px; height: 250px;">
+  <div id="c">
 
-    <div data-carousel-row>
-
-      <div data-carousel-col>
-        Row 1 Col 1
-      </div>
-
-      <div data-carousel-col
-           data-carousel-horo-div>
-
-        <div>Row 1 Col 2 (Top)</div>
-        <div>Row 1 Col 2 (Bottom)</div>
-
-      </div>
-
+    <div id="1">
+      Row 1 Col 1
     </div>
 
-    <div data-carousel-row>
-      <div data-carousel-col>
-        Row 2 Col 1
-      </div>
-      <div data-carousel-col>
-        Row 2 Col 2
-      </div>
+    <div id="2">
+      <div>Row 1 Col 2 (Top)</div>
+      <div>Row 1 Col 2 (Bottom)</div>
+    </div>
+
+    <div id="3">
+      Row 2 Col 1
+    </div>
+    <div id="4">
+      Row 2 Col 2
     </div>
 
   </div>

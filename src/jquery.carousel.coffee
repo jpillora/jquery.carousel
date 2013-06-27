@@ -9,72 +9,72 @@
 #helpers
 name = 'carousel'
 
-
 colors = ['#F07878','#B5B5FF','#0CAA0C','#E278F0']
+
+log = ->
+  return unless window['console']
+  args = Array::slice.call arguments
+  console.log.apply console, args
 
 inherit = (a, b = {}) ->
   F = ->
   F.prototype = a
   $.extend true, new F, b
 
-class Row
-  constructor: (@elem, @index, @carousel) ->
-    unless @elem.is('[data-carousel-row]')
-      console.warn('Is this a carousel row ? ', @elem[0])
-    console.log "new row"
-    @cols = []
-    @elem.children().each (i, e) =>
-      col = new Col $(e), i, @, @carousel
-      @cols.push col
+class Item
+  constructor: (@row, @col, @elem, @car) ->
     #items have been placed
     @elem.remove()
-
-class Col
-  constructor: (@elem, @index, @row, @carousel) ->
-    console.log "new item #{@row.index}, #{@index}"
-
+  
+  position:  ->
     @elem.css
       background: colors.pop()
-      width: @carousel.w
-      height: @carousel.h
-      left: @carousel.w * @index
-      top: @carousel.h * @row.index
+      width: @car.w
+      height: @car.h
+      left: @car.w * @row
+      top: @car.h * @col
       position: "absolute"
-    
-    @carousel.grid.append @elem
+
+    @car.grid.append @elem
 
 class Carousel
 
   #plugin defaults
   defaults:
-    auto: true
     autoOffOnManual: true
     duration: 1000
     pause: 2500
+    rowLength: Infinity
+    wrap: true
+    fixed: true
     direction: "right"
     easing: "easeInOutExpo"
 
   constructor: (@elem, opts) ->
-    console.log "new carousel"
+    log "new carousel"
 
+    @r = 0
+    @c = 0
     @opts = inherit @defaults
     @update opts
     @init()
 
   update: (opts) ->
-    if $.isPlainObject opts
-      $.extend @opts, opts
-    console.log "update", @opts
+    return unless $.isPlainObject opts
+    $.extend @opts, opts
+    log "update", @opts
 
   command: (args) ->
     cmd = args.shift()
-    console.log "command", cmd, args
-    @[cmd]?.apply @, args
+    log "command", cmd, args
+    fn = @commands[cmd]
+    unless typeof fn is 'function'
+      log "command '#{cmd}' does not exist"
+      return
+    fn.apply @, args
 
   init: ->
     #calc dimensions
-    @w = @elem.width()
-    @h = @elem.height()
 
     @animating = false
     @curr = 0
@@ -82,15 +82,17 @@ class Carousel
 
     #create the 'floor' for all 'slides'
     @grid = $("<div/>").css
+      position: "absolute"
       width: @w
       height: @h
-      position: "absolute"
 
     #construct move children into grid
-    @rows = []
+    @items = rows = []
     @elem.children().each (i, e) =>
-      row = new Row $(e), i, @
-      @rows.push row
+      row = Math.floor(i/@opts.rowLength) or 0
+      col = i%n
+      cols = rows[row] = rows[row] or []
+      cols[col] = new Item row, col, $(e), @
 
     #place grid on carousel and mask
     @elem.
@@ -100,10 +102,20 @@ class Carousel
         position: "relative"
         overflow: "hidden"
 
+    # @w = @elem.width()
+    # @h = @elem.height()  
+    # @elem.width() if @opts.fixedWidth
+
     # start if auto
     # @autoAnimate()
 
-    console.log "bound"
+    log "bound"
+
+  currItem: ->
+    #return item based on r and c
+
+  #setLayout: (arr) -> resets items
+
 
   bindButtons: ->
     #bind left and right buttons if given
@@ -115,29 +127,28 @@ class Carousel
       opts {auto: false} if opts().autoOffOnManual
       right()
 
-  to: (row, col, callback) ->
-    #animate from current to next
-    animating = true
-    @grid.stop().animate({
-      top: -@h*row
-      left: -@w*col
-    },{
-      duration: @opts.duration
-      easing: @opts.easing
-      complete: =>
-        @autoAnimate
-        if callback
-          callback()
-    })
-    
-  left: ->
-  right: ->
   animate: ->
   autoAnimate: ->
     @animating = false
 
-#auto activate with ujs
-$ -> $("[data-carousel]").carousel()
+  commands:
+    to: (row, col, callback) ->
+      #animate from current to next
+      animating = true
+      @grid.stop().animate({
+        top: -@h*row
+        left: -@w*col
+      },{
+        duration: @opts.duration
+        easing: @opts.easing
+        complete: =>
+          @autoAnimate
+          if callback
+            callback()
+      })
+  
+    left: ->
+    right: ->
 
 $.fn.carousel = ->
   args = Array.prototype.slice.apply arguments
@@ -145,14 +156,16 @@ $.fn.carousel = ->
   return if elems.length is 0
   elems.each ->
     c = $(@).data "carousel"
-    #update or command on existing
-    if c
-      if typeof args[0] is 'string'
-        c.command args
-      else if $.isPlainObject args[0]
-        c.update args[0]
-      return
     #does not exist, construct
-    c = new Carousel $(@), args[0]
+    unless c
+      new Carousel $(@), args[0]
+      return
 
-console.log name, "plugin added"
+    #update or command on existing
+    if typeof args[0] is 'string'
+      c.command args
+    else if $.isPlainObject args[0]
+      c.update args[0]
+    
+
+log name, "plugin added"
